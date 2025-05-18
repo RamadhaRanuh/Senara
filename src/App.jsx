@@ -96,10 +96,10 @@ function MainPageLayout() {
       setIsLoaded(true);
     }, 100);
 
-    // Create intersection observers for each section
+    // Create intersection observers for each section with improved mobile options
     const observerOptions = {
-      threshold: 0.2,
-      rootMargin: '0px'
+      threshold: isMobile ? 0.1 : 0.2, // Lower threshold for mobile
+      rootMargin: isMobile ? '20px' : '0px' // Add some margin on mobile
     };
 
     const observers = [
@@ -113,7 +113,10 @@ function MainPageLayout() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setter(true);
-            observer.unobserve(entry.target);
+            // Don't unobserve on mobile to prevent scroll issues
+            if (!isMobile) {
+              observer.unobserve(entry.target);
+            }
           }
         });
       }, observerOptions);
@@ -125,11 +128,20 @@ function MainPageLayout() {
       return observer;
     });
 
+    // Add passive touch listeners for better mobile scrolling
+    const touchOptions = { passive: true };
+    document.addEventListener('touchstart', () => {}, touchOptions);
+    document.addEventListener('touchmove', () => {}, touchOptions);
+    document.addEventListener('touchend', () => {}, touchOptions);
+
     return () => {
       window.removeEventListener('resize', handleResize);
       observers.forEach(observer => observer.disconnect());
+      document.removeEventListener('touchstart', () => {}, touchOptions);
+      document.removeEventListener('touchmove', () => {}, touchOptions);
+      document.removeEventListener('touchend', () => {}, touchOptions);
     };
-  }, []);
+  }, [isMobile]); // Add isMobile as dependency
 
   const handleSlide = (direction) => {
     const slider = document.getElementById('slider');
