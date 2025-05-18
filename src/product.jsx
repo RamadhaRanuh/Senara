@@ -144,7 +144,7 @@ function Product() {
 
     return (
         <>
-            <div className={`relative overflow-x-hidden h-full md:h-full transition-all duration-1000 ease-out transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{fontFamily: 'Glacial Indifference'}}>
+            <div className={`relative h-full md:h-full transition-all duration-1000 ease-out transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{fontFamily: 'Glacial Indifference'}}>
                 <img src={malam} alt="malam" class="absolute top-95 md:-top-150 left-6 md:left-10 transform md:rotate-[20deg] scale-70 md:scale-75 w-48 md:w-auto" />
                 <img src={lembung} alt="lembung" class="absolute top-93 md:-top-50 left-26 md:left-0 transform md:-rotate-[10deg] scale-67 md:scale-75 w-48 md:w-auto" />
                 <img src={teduh} alt="teduh" class="absolute top-94 md:top-50 left-48 md:left-20 transform md:rotate-[30deg] scale-70 md:scale-75 w-48 md:w-auto" />

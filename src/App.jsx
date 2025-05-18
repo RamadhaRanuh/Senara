@@ -172,7 +172,7 @@ function MainPageLayout() {
 
   return (
     <>
-      <div className={`overflow-x-hidden w-full relative transition-all duration-1000 ease-out transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div className={`w-full relative transition-all duration-1000 ease-out transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div class="flex flex-col justify-between" style={{fontFamily: 'Glacial Indifference'}}>
           <div class="flex flex-col md:flex-row">  {/* Stack on mobile, row on medium screens and up */}
             <div class="flex flex-col w-full md:w-11/20">  {/* Full width on mobile, 11/20 on medium up */}
