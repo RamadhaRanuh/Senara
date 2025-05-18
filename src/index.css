@@ -77,6 +77,20 @@ button:focus-visible {
   font-style: normal;
 }
 
+@font-face{
+  font-family: 'Glacial Indifference Bold';
+  src: url('./fonts/GlacialIndifference-Bold.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face{
+  font-family: 'Glacial Indifference Italic';
+  src: url('./fonts/GlacialIndifference-Italic.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 @font-face {
   font-family: 'Liana';
   src: url('./fonts/Liana.ttf') format('truetype');
