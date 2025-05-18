@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from './assets/logo.svg'
 import kimia from './assets/kimia.jpg';
 
 function Contact() {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoaded(true);
+    }, 100);
+  }, []);
+
   return (
     <>
-      <div className="flex flex-col md:flex-row min-h-screen md:h-234" style={{fontFamily: 'Glacial Indifference'}}>
+      <div className={`flex flex-col md:flex-row min-h-screen md:h-234 transition-all duration-1000 ease-out transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{fontFamily: 'Glacial Indifference'}}>
         <div className="flex flex-col w-full md:w-11/20 justify-start md:justify-center text-center p-4 md:px-15 md:py-0">
           {/* Navigation */}
           <div className="flex flex-col md:flex-row justify-center md:justify-end px-2 md:px-0 mb-6 pb-6 md:mb-28 order-2 md:order-1">

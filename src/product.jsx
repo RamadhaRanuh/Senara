@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './App.css'
 import lembung from './assets/lembung-bottle.svg'
@@ -34,6 +34,65 @@ import logo from './assets/logo.svg'
 
 
 function Product() {
+    const [isLoaded, setIsLoaded] = useState(false);
+    
+    // Refs for sections
+    const ourProductsRef = useRef(null);
+    const expoSaleRef = useRef(null);
+    const rayaSpicesRef = useRef(null);
+    const teduhRef = useRef(null);
+    const lembungRef = useRef(null);
+    const malamRef = useRef(null);
+
+    // Animation states
+    const [ourProductsVisible, setOurProductsVisible] = useState(false);
+    const [expoSaleVisible, setExpoSaleVisible] = useState(false);
+    const [rayaSpicesVisible, setRayaSpicesVisible] = useState(false);
+    const [teduhVisible, setTeduhVisible] = useState(false);
+    const [lembungVisible, setLembungVisible] = useState(false);
+    const [malamVisible, setMalamVisible] = useState(false);
+
+    useEffect(() => {
+        // Initial page load animation
+        setTimeout(() => {
+            setIsLoaded(true);
+        }, 100);
+
+        // Create intersection observers for each section
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px'
+        };
+
+        const observers = [
+            { ref: ourProductsRef, setter: setOurProductsVisible },
+            { ref: expoSaleRef, setter: setExpoSaleVisible },
+            { ref: rayaSpicesRef, setter: setRayaSpicesVisible },
+            { ref: teduhRef, setter: setTeduhVisible },
+            { ref: lembungRef, setter: setLembungVisible },
+            { ref: malamRef, setter: setMalamVisible }
+        ].map(({ ref, setter }) => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setter(true);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            if (ref.current) {
+                observer.observe(ref.current);
+            }
+
+            return observer;
+        });
+
+        return () => {
+            observers.forEach(observer => observer.disconnect());
+        };
+    }, []);
+
     const products = [
         {
             name: "MALAM BODY WASH",
@@ -85,7 +144,7 @@ function Product() {
 
     return (
         <>
-            <div className="relative h-full md:h-[6850px]" style={{fontFamily: 'Glacial Indifference'}}>
+            <div className={`relative h-full md:h-full transition-all duration-1000 ease-out transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{fontFamily: 'Glacial Indifference'}}>
                 <img src={malam} alt="malam" class="absolute top-95 md:-top-150 left-6 md:left-10 transform md:rotate-[20deg] scale-70 md:scale-75 w-48 md:w-auto" />
                 <img src={lembung} alt="lembung" class="absolute top-93 md:-top-50 left-26 md:left-0 transform md:-rotate-[10deg] scale-67 md:scale-75 w-48 md:w-auto" />
                 <img src={teduh} alt="teduh" class="absolute top-94 md:top-50 left-48 md:left-20 transform md:rotate-[30deg] scale-70 md:scale-75 w-48 md:w-auto" />
@@ -101,14 +160,16 @@ function Product() {
                     </div>
                     </div>
 
-                    <div className="flex justify-end">
+                    {/* Our Products Section */}
+                    <div ref={ourProductsRef} className={`flex justify-end transition-all duration-1000 ease-out transform ${ourProductsVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
                         <div className="flex flex-col w-full md:w-1/2 px-4 md:pr-20 pt-10 md:pt-20 gap-6 md:gap-10">
                             <p className="text-4xl md:text-[118px] font-bold text-center" style={{fontFamily: 'Glacial Indifference Bold'}}>our products.</p>
                             <p className="text-[14px] md:text-[22px] text-justify">Senara Raya Spices Travel Size Shampoo, Body Wash, and Hand Wash invites you into a warm, aromatic journey rooted in Indonesian tradition. Infused with a comforting blend of cinnamon, clove, nutmeg, and star anise, this gentle formula cleanses the scalp while indulging the senses in the festive richness of local spices. Perfectly sized for travel (100 ml), each bottle brings the nostalgic essence of homecoming wherever you go — leaving your body and hair soft, refreshed, and delicately scented.</p>
                         </div>
                     </div>
 
-                    <div className="flex justify-end" style={{fontFamily: 'Glacial Indifference Bold'}}>
+                    {/* Expo Sale Section */}
+                    <div ref={expoSaleRef} className={`flex justify-end transition-all duration-1000 ease-out transform ${expoSaleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{fontFamily: 'Glacial Indifference Bold'}}>
                         <div className="flex flex-col w-full md:w-1/2 px-4 md:pr-30 pt-50 md:pt-100 gap-0 justify-center">
                             <p className="text-2xl md:text-[32px] text-center md:text-center">EXPO SALE</p>
                             <p className="text-2xl md:text-[32px] text-center md:text-center">ALL TRAVEL SIZE VARIANT RP 45K/PCS</p>
@@ -134,103 +195,117 @@ function Product() {
                         ))}
                     </div>
 
-                    <h3 className="text-center text-3xl text-[45px] md:text-[180px] pt-6 md:pt-20 px-4 md:px-0" style={{fontFamily: 'Glacial Indifference Italic'}}>raya spices variants</h3>
-                    <div className="overflow-hidden w-full h-60 md:h-120">
-                        <div className="flex animate-carousel gap-4 md:gap-4 infinite-scroll">
-                            <img src={raya1} alt="raya1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={raya2} alt="raya2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={raya3} alt="raya3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={raya4} alt="raya4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={raya5} alt="raya5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            {/* Duplicate images for seamless loop */}
-                            <img src={raya1} alt="raya1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={raya2} alt="raya2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={raya3} alt="raya3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={raya4} alt="raya4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={raya5} alt="raya5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                    {/* Raya Spices Section */}
+                    <div ref={rayaSpicesRef} className={`transition-all duration-1000 ease-out transform ${rayaSpicesVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                        <h3 className="text-center text-3xl text-[45px] md:text-[180px] pt-6 md:pt-20 px-4 md:px-0" style={{fontFamily: 'Glacial Indifference Italic'}}>raya spices variants</h3>
+                        <div className="overflow-hidden w-full h-60 md:h-120">
+                            <div className="flex animate-carousel gap-4 md:gap-4 infinite-scroll">
+                                <img src={raya1} alt="raya1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={raya2} alt="raya2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={raya3} alt="raya3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={raya4} alt="raya4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={raya5} alt="raya5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                {/* Duplicate images for seamless loop */}
+                                <img src={raya1} alt="raya1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={raya2} alt="raya2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={raya3} alt="raya3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={raya4} alt="raya4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={raya5} alt="raya5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                            </div>
                         </div>
+                        <style jsx>{`
+                            @keyframes scroll {
+                                0% {
+                                    transform: translateX(0);
+                                }
+                                100% {
+                                    transform: translateX(-100%);
+                                }
+                            }
+                            .animate-carousel {
+                                animation: scroll 30s linear infinite;
+                            }
+                            .infinite-scroll {
+                                width: 200%;
+                            }
+                        `}</style>
                     </div>
-                    <style jsx>{`
-                        @keyframes scroll {
-                            0% {
-                                transform: translateX(0);
-                            }
-                            100% {
-                                transform: translateX(-100%);
-                            }
-                        }
-                        .animate-carousel {
-                            animation: scroll 30s linear infinite;
-                        }
-                        .infinite-scroll {
-                            width: 200%;
-                        }
-                    `}</style>
-                    <h3 className="text-left text-[48px] md:text-[220px] pt-8 md:pt-30 px-4 md:pl-8" style={{fontFamily: 'Glacial Indifference'}}>TEDUH</h3>
-                    <div className="overflow-hidden w-full h-60 md:h-120 md:-mt-10">
-                        <div className="flex animate-carousel-reverse gap-4 md:gap-4 infinite-scroll">
-                            <img src={teduh1} alt="teduh1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={teduh2} alt="teduh2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={teduh3} alt="teduh3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={teduh4} alt="teduh4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={teduh5} alt="teduh5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            {/* Duplicate images for seamless loop */}
-                            <img src={teduh1} alt="teduh1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={teduh2} alt="teduh2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={teduh3} alt="teduh3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={teduh4} alt="teduh4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={teduh5} alt="teduh5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                        </div>
-                    </div>
-                    <p className="text-justify text-base md:text-[24px] pt-6 md:pt-8 px-4 md:px-50" style={{fontFamily: 'Glacial Indifference'}}>Teduh captures the tranquility of shaded gardens and quiet forests. With calming notes of lavandin, geranium, patchouli, and vetiver, this scent offers a sense of stillness and deep connection. It gently wraps you in serenity, restoring balance after a long day. Teduh is a breath of calm in the middle of life's rush—a return to inner peace.</p>
-                    <style jsx>{`
-                        @keyframes scroll-reverse {
-                            0% {
-                                transform: translateX(-100%);
-                            }
-                            100% {
-                                transform: translateX(0);
-                            }
-                        }
-                        .animate-carousel-reverse {
-                            animation: scroll-reverse 30s linear infinite;
-                        }
-                    `}</style>
-                    <h3 className="text-right text-[48px] md:text-[220px] pt-8 md:pt-30 px-4 md:pr-8" style={{fontFamily: 'Glacial Indifference'}}>LEMBUNG</h3>
-                    <div className="overflow-hidden w-full h-60 md:h-120 md:-mt-10">
-                        <div className="flex animate-carousel gap-4 md:gap-4 infinite-scroll">
-                            <img src={lembung1} alt="lembung1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={lembung2} alt="lembung2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={lembung3} alt="lembung3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={lembung4} alt="lembung4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={lembung5} alt="lembung5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            {/* Duplicate images for seamless loop */}
-                            <img src={lembung1} alt="lembung1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={lembung2} alt="lembung2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={lembung3} alt="lembung3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={lembung4} alt="lembung4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={lembung5} alt="lembung5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                        </div>
-                    </div>
-                    <p className="text-justify text-base md:text-[24px] pt-6 md:pt-8 px-4 md:px-50" style={{fontFamily: 'Glacial Indifference'}}>Inspired by the crisp air of morning dew and sunlit citrus groves, Lembung is a refreshing blend of lemongrass, pomelo, kaffir lime, and local botanicals. Its bright, zesty aroma awakens the senses and leaves a lasting feeling of clarity and freshness. Designed to energize your ritual, Lembung invites you to start the day with a clear mind and a grounded spirit.</p>
 
-                    <h3 className="text-left text-[48px] md:text-[220px] pt-8 md:pt-30 px-4 md:pl-8" style={{fontFamily: 'Glacial Indifference'}}>MALAM</h3>
-                    <div className="overflow-hidden w-full h-60 md:h-120 md:-mt-10">
-                        <div className="flex animate-carousel-reverse gap-4 md:gap-4 infinite-scroll">
-                            <img src={malam1} alt="malam1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={malam2} alt="malam2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={malam3} alt="malam3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={malam4} alt="malam4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={malam5} alt="malam5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            {/* Duplicate images for seamless loop */}
-                            <img src={malam1} alt="malam1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={malam2} alt="malam2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={malam3} alt="malam3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={malam4} alt="malam4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
-                            <img src={malam5} alt="malam5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                    {/* Teduh Section */}
+                    <div ref={teduhRef} className={`transition-all duration-1000 ease-out transform ${teduhVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+                        <h3 className="text-left text-[48px] md:text-[220px] pt-8 md:pt-30 px-4 md:pl-8" style={{fontFamily: 'Glacial Indifference'}}>TEDUH</h3>
+                        <div className="overflow-hidden w-full h-60 md:h-120 md:-mt-10">
+                            <div className="flex animate-carousel-reverse gap-4 md:gap-4 infinite-scroll">
+                                <img src={teduh1} alt="teduh1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={teduh2} alt="teduh2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={teduh3} alt="teduh3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={teduh4} alt="teduh4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={teduh5} alt="teduh5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                {/* Duplicate images for seamless loop */}
+                                <img src={teduh1} alt="teduh1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={teduh2} alt="teduh2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={teduh3} alt="teduh3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={teduh4} alt="teduh4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={teduh5} alt="teduh5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                            </div>
                         </div>
+                        <p className="text-justify text-base md:text-[24px] pt-6 md:pt-8 px-4 md:px-50" style={{fontFamily: 'Glacial Indifference'}}>Teduh captures the tranquility of shaded gardens and quiet forests. With calming notes of lavandin, geranium, patchouli, and vetiver, this scent offers a sense of stillness and deep connection. It gently wraps you in serenity, restoring balance after a long day. Teduh is a breath of calm in the middle of life's rush—a return to inner peace.</p>
+                        <style jsx>{`
+                            @keyframes scroll-reverse {
+                                0% {
+                                    transform: translateX(-100%);
+                                }
+                                100% {
+                                    transform: translateX(0);
+                                }
+                            }
+                            .animate-carousel-reverse {
+                                animation: scroll-reverse 30s linear infinite;
+                            }
+                        `}</style>
                     </div>
-                    <p className="text-justify text-base md:text-[24px] pt-6 md:pt-8 py-10 md:py-0 px-4 md:px-50" style={{fontFamily: 'Glacial Indifference'}}>Malam is a warm and indulgent blend of cinnamon, vanilla, lavender, and sandalwood—crafted to soothe the body and quiet the mind. Inspired by slow evenings and intimate rituals, it evokes the feeling of comfort, nostalgia, and deep relaxation. Let Malam guide you into rest and reflection, wherever the night finds you.</p>
+
+                    {/* Lembung Section */}
+                    <div ref={lembungRef} className={`transition-all duration-1000 ease-out transform ${lembungVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+                        <h3 className="text-right text-[48px] md:text-[220px] pt-8 md:pt-30 px-4 md:pr-8" style={{fontFamily: 'Glacial Indifference'}}>LEMBUNG</h3>
+                        <div className="overflow-hidden w-full h-60 md:h-120 md:-mt-10">
+                            <div className="flex animate-carousel gap-4 md:gap-4 infinite-scroll">
+                                <img src={lembung1} alt="lembung1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={lembung2} alt="lembung2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={lembung3} alt="lembung3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={lembung4} alt="lembung4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={lembung5} alt="lembung5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                {/* Duplicate images for seamless loop */}
+                                <img src={lembung1} alt="lembung1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={lembung2} alt="lembung2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={lembung3} alt="lembung3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={lembung4} alt="lembung4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={lembung5} alt="lembung5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                            </div>
+                        </div>
+                        <p className="text-justify text-base md:text-[24px] pt-6 md:pt-8 px-4 md:px-50" style={{fontFamily: 'Glacial Indifference'}}>Inspired by the crisp air of morning dew and sunlit citrus groves, Lembung is a refreshing blend of lemongrass, pomelo, kaffir lime, and local botanicals. Its bright, zesty aroma awakens the senses and leaves a lasting feeling of clarity and freshness. Designed to energize your ritual, Lembung invites you to start the day with a clear mind and a grounded spirit.</p>
+                    </div>
+
+                    {/* Malam Section */}
+                    <div ref={malamRef} className={`transition-all duration-1000 ease-out transform ${malamVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                        <h3 className="text-left text-[48px] md:text-[220px] pt-8 md:pt-30 px-4 md:pl-8" style={{fontFamily: 'Glacial Indifference'}}>MALAM</h3>
+                        <div className="overflow-hidden w-full h-60 md:h-120 md:-mt-10">
+                            <div className="flex animate-carousel-reverse gap-4 md:gap-4 infinite-scroll">
+                                <img src={malam1} alt="malam1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={malam2} alt="malam2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={malam3} alt="malam3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={malam4} alt="malam4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={malam5} alt="malam5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                {/* Duplicate images for seamless loop */}
+                                <img src={malam1} alt="malam1" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={malam2} alt="malam2" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={malam3} alt="malam3" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={malam4} alt="malam4" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                                <img src={malam5} alt="malam5" className="w-3/5 md:w-1/5 min-w-[40%] md:min-w-[20%] h-60 md:h-120 object-cover rounded-lg md:rounded-none" />
+                            </div>
+                        </div>
+                        <p className="text-justify text-base md:text-[24px] pt-6 md:pt-8 py-10 md:py-10 px-4 md:px-50" style={{fontFamily: 'Glacial Indifference'}}>Malam is a warm and indulgent blend of cinnamon, vanilla, lavender, and sandalwood—crafted to soothe the body and quiet the mind. Inspired by slow evenings and intimate rituals, it evokes the feeling of comfort, nostalgia, and deep relaxation. Let Malam guide you into rest and reflection, wherever the night finds you.</p>
+                    </div>
                 </div>
             </div>
         </>

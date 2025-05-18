@@ -1,5 +1,5 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css'
 import logo from './assets/logo.svg'
 import rayaspices from './assets/rayaspices.svg'
@@ -29,6 +29,23 @@ function MainPageLayout() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [activeModal, setActiveModal] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  // Refs for sections
+  const rayaSpicesRef = useRef(null);
+  const visionRef = useRef(null);
+  const bodycareRef = useRef(null);
+  const valuesRef = useRef(null);
+  const botanicalsRef = useRef(null);
+  const noteRef = useRef(null);
+
+  // Animation states
+  const [visionVisible, setVisionVisible] = useState(false);
+  const [bodycareVisible, setBodycareVisible] = useState(false);
+  const [valuesVisible, setValuesVisible] = useState(false);
+  const [botanicalsVisible, setBotanicalsVisible] = useState(false);
+  const [noteVisible, setNoteVisible] = useState(false);
+
   const totalSlides = isMobile ? 6 : 2;
   const slidesPerView = isMobile ? 1 : 1;
   const maxSlides = totalSlides - slidesPerView;
@@ -73,7 +90,45 @@ function MainPageLayout() {
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    
+    // Initial animation trigger
+    setTimeout(() => {
+      setIsLoaded(true);
+    }, 100);
+
+    // Create intersection observers for each section
+    const observerOptions = {
+      threshold: 0.2,
+      rootMargin: '0px'
+    };
+
+    const observers = [
+      { ref: visionRef, setter: setVisionVisible },
+      { ref: bodycareRef, setter: setBodycareVisible },
+      { ref: valuesRef, setter: setValuesVisible },
+      { ref: botanicalsRef, setter: setBotanicalsVisible },
+      { ref: noteRef, setter: setNoteVisible }
+    ].map(({ ref, setter }) => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setter(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      if (ref.current) {
+        observer.observe(ref.current);
+      }
+
+      return observer;
+    });
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      observers.forEach(observer => observer.disconnect());
+    };
   }, []);
 
   const handleSlide = (direction) => {
@@ -105,7 +160,7 @@ function MainPageLayout() {
 
   return (
     <>
-      <div className="overflow-x-hidden w-full relative">
+      <div className={`overflow-x-hidden w-full relative transition-all duration-1000 ease-out transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div class="flex flex-col justify-between" style={{fontFamily: 'Glacial Indifference'}}>
           <div class="flex flex-col md:flex-row">  {/* Stack on mobile, row on medium screens and up */}
             <div class="flex flex-col w-full md:w-11/20">  {/* Full width on mobile, 11/20 on medium up */}
@@ -119,7 +174,7 @@ function MainPageLayout() {
                   <p class="z-10"><Link to="#our-values" className="cursor-pointer hover:underline z-10 transition-colors duration-200" style={{color: '#c33c09'}} onMouseOver={(e) => e.target.style.color = '#8b2a06'} onMouseOut={(e) => e.target.style.color = '#c33c09'}>About Us</Link></p>
                 </div>
               </div>
-              <div class="h-55 md:h-135">
+              <div ref={rayaSpicesRef} class="h-55 md:h-135">
                 <img src={rayaspices} alt="rayaspices" class="w-full md:w-2000 object-contain md:scale-175"/>
               </div>
               <p class="w-full md:w-125 text-justify px-4 md:ml-auto md:mr-20 text-base md:text-lg mt-0 md:mt-0">
@@ -130,7 +185,7 @@ function MainPageLayout() {
               <img src={baliwoman} alt="baliwoman" class="w-full h-full object-cover"/>
             </div>
           </div>
-          <div class="flex flex-col" style={{background: '#c33c09'}}>
+          <div ref={visionRef} className={`flex flex-col transition-all duration-1000 ease-out transform ${visionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{background: '#c33c09'}}>
             <div class="flex flex-col m-4 md:m-10 rounded-4xl" style={{background: '#f6f2e7'}}>
               <p class="text-left text-[32px] md:text-[48px] ml-6 md:ml-10 mt-6 md:mt-10" style={{fontFamily: 'Glacial Indifference Bold'}}>our vision and mission</p>
               
@@ -181,7 +236,7 @@ function MainPageLayout() {
               )}
             </div>
           </div>
-          <div class="flex flex-col md:flex-row h-auto md:h-275">
+          <div ref={bodycareRef} className={`flex flex-col md:flex-row h-auto md:h-275 transition-all duration-1000 ease-out transform ${bodycareVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <img src={skin} alt="skin" class="w-full md:w-1/2 h-auto md:h-auto object-contain md:object-cover" />
             <div class="flex flex-col w-full md:w-1/2 justify-center text-center px-6 md:px-15 py-8 md:py-0">
               <p class="text-left text-[32px] md:text-[56px] mb-4 md:mb-6" style={{fontFamily: 'Glacial Indifference Bold'}}>
@@ -192,7 +247,7 @@ function MainPageLayout() {
               </p> 
             </div>
           </div>
-          <div class="flex flex-col" style={{background: '#c33c09'}}>
+          <div ref={valuesRef} className={`flex flex-col transition-all duration-1000 ease-out transform ${valuesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{background: '#c33c09'}}>
             <div id="our-values" class="flex flex-col m-4 md:m-10 rounded-4xl pl-4 md:pl-10" style={{background: '#f6f2e7'}}>
               <p class="text-center text-[32px] md:text-[48px] mt-5 text-left" style={{fontFamily: 'Glacial Indifference Bold'}}>our values.</p>
               <p class="text-center text-[24px] md:text-[32px] text-left w-90 md:w-210">At Senara, we are grounded in purpose and rooted in care. We believe in:</p>
@@ -205,7 +260,7 @@ function MainPageLayout() {
               </div>
             </div>
           </div>
-          <div class="flex flex-col px-4 md:px-10 relative">
+          <div ref={botanicalsRef} className={`flex flex-col px-4 md:px-10 relative transition-all duration-1000 ease-out transform ${botanicalsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <p class="py-10 text-left text-[32px] md:text-[48px] w-106" style={{fontFamily: 'Glacial Indifference Bold'}}>powered by proven botanicals.</p>
             <img 
               src={Buttonleft} 
@@ -233,7 +288,7 @@ function MainPageLayout() {
               </div>
             </div>
           </div>
-          <div class="flex flex-col pb-10 md:pb-20" style={{background: '#c33c09'}}>
+          <div ref={noteRef} className={`flex flex-col pb-10 md:pb-20 transition-all duration-1000 ease-out transform ${noteVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{background: '#c33c09'}}>
             <img src={note} alt="note" class="w-full h-full object-cover"/>
           </div>
         </div>
@@ -244,6 +299,7 @@ function MainPageLayout() {
 
 function App() {
   const location = useLocation();
+  const [pageLoaded, setPageLoaded] = useState(false);
 
   useEffect(() => {
     // Small delay to ensure the DOM is ready
@@ -254,15 +310,18 @@ function App() {
           element.scrollIntoView({ behavior: 'smooth' });
         }
       }
+      setPageLoaded(true);
     }, 100);
   }, [location]);
 
   return (
-    <Routes>
-      <Route path="/" element={<MainPageLayout />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/product" element={<ProductPage />} />
-    </Routes>
+    <div className={`transition-all duration-1000 ease-out transform ${pageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <Routes>
+        <Route path="/" element={<MainPageLayout />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/product" element={<ProductPage />} />
+      </Routes>
+    </div>
   )
 }
 
