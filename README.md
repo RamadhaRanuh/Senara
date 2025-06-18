@@ -1,19 +1,23 @@
-# SENARA
+<h1 align="center">SENARA</h1>
 
-*Empowering Innovation, Elevating Experiences Seamlessly*
+<p align="center"><em>Empowering Innovation, Elevating Experiences Seamlessly</em></p>
 
-![Last Commit](https://img.shields.io/badge/last%20commit-may-6c757d)
-![JavaScript](https://img.shields.io/badge/javascript-94.6%25-blue)
-![Languages](https://img.shields.io/badge/languages-3-6c757d)
+<p align="center">
+  <img src="https://img.shields.io/badge/last%20commit-may-6c757d" alt="Last Commit">
+  <img src="https://img.shields.io/badge/javascript-94.6%25-blue" alt="JavaScript">
+  <img src="https://img.shields.io/badge/languages-3-6c757d" alt="Languages">
+</p>
 
 ---
 
-## Built with the tools and technologies:
+<h3 align="center">Built with the tools and technologies:</h3>
 
-![JSON](https://img.shields.io/badge/-JSON-000000?logo=json&logoColor=white)
-![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white)
-![npm](https://img.shields.io/badge/-npm-CB3837?logo=npm&logoColor=white)
-![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?logo=javascript&logoColor=black)
-![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/-Vite-646CFF?logo=vite&logoColor=white)
-![ESLint](https://img.shields.io/badge/-ESLint-4B32C3?logo=eslint&logoColor=white)
+<p align="center">
+  <img src="https://img.shields.io/badge/-JSON-000000?logo=json&logoColor=white" alt="JSON">
+  <img src="https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white" alt="Markdown">
+  <img src="https://img.shields.io/badge/-npm-CB3837?logo=npm&logoColor=white" alt="npm">
+  <img src="https://img.shields.io/badge/-JavaScript-F7DF1E?logo=javascript&logoColor=black" alt="JavaScript">
+  <img src="https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black" alt="React">
+  <img src="https://img.shields.io/badge/-Vite-646CFF?logo=vite&logoColor=white" alt="Vite">
+  <img src="https://img.shields.io/badge/-ESLint-4B32C3?logo=eslint&logoColor=white" alt="ESLint">
+</p>
