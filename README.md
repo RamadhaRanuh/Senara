@@ -1,4 +1,3 @@
-````markdown
 <h1 align="center">SENARA</h1>
 
 <p align="center"><em>Empowering Innovation, Elevating Experiences Seamlessly</em></p>
@@ -31,7 +30,7 @@ To get a local copy up and running, follow these simple steps.
 
 ### Prerequisites
 
-Ensure you have Node.js and npm (Node Package Manager) installed.
+Please make sure you have Node.js and npm (Node Package Manager) installed.
 
 ### Installation
 
